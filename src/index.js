@@ -91,20 +91,42 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
   const todoCheckId = user.todos.find(todo => todo.id === id);
 
   if (!todoCheckId) {
-    return response.status(404).json({ error: 'Todo not found' });
+    return response.status(404).json({ error: 'Task not found' });
   }
 
   todoCheckId.title = title;
   todoCheckId.deadline = new Date(deadline);
 
   return response.status(200).json({
-    message: "Updated todo successfully!", todoCheckId
+    message: "Updated task successfully!", todoCheckId
   });
 
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { id } = request.params;
+
+  const { user } = request;
+
+  const doneAlter = user.todos.find( todo => todo.id === id);
+
+  if(!doneAlter){
+    return response.status(400).json({
+      error: "Task not found"
+    });
+  }
+
+  if(doneAlter.done === true){
+    return response.status(400).json({
+      error: "Task has already been completed!"
+    });
+  }
+
+  doneAlter.done = true;
+
+  return response.status(200).json({
+    message: "Task completed successfully"
+  })
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {

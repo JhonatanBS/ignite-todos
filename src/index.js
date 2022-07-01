@@ -130,7 +130,21 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+   const { id } = request.params;
+
+   const { user } = request;
+
+   const todoCheckId = user.todos.findIndex( todo => todo.id === id);
+
+   if( todoCheckId === -1 ){
+    return response.status(404).json({
+      error: "Task not found!"
+    });
+   }
+
+   user.todos.splice(todoCheckId,1);
+
+   return response.status(204).json();
 });
 
 module.exports = app;
